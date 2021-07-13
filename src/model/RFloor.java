@@ -71,7 +71,6 @@ public class RFloor implements Floor{
             tab.unsetSection();
             tab.getSection().unassignTable(tab);
         }
-
     }
 
     @Override
