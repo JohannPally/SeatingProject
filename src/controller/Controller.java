@@ -1,9 +1,7 @@
 package controller;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class Controller {
     //not really a controller right now but will do the job
@@ -13,35 +11,51 @@ public class Controller {
     //proper sequence but reject in the right moment if the argument guessed was the wrong type and autocorrect/retry
     //the fail
 
+    //TODO idea, colors for sections, also output tallies for table count
+
     //also split and trim at the same time when using Scanner.nextLine()
     private static String equalLine = "==================================================================================";
     private static String periodLine = "..................................................................................";
 
-    public static String [] trimSplitAndLower(String s){
+    public static ArrayList<String> trimToArrList(String s){
         String [] arr = s.trim().split("\\s+");
         for(int i = 0; i < arr.length; i++){
             arr[i] = arr[i].toLowerCase(Locale.ROOT);
         }
-        return arr;
+        ArrayList<String> out = new ArrayList<String>();
+        Collections.addAll(out, arr);
+        return out;
     }
 
-    public static void helpMessage(Scanner in, String [] comms){
+    public static void helpMessage(Scanner in, ArrayList<String> comms){
         String listComms = "------ \n quit \n------";
         System.out.println("The following are valid commands:");
         System.out.println(listComms);
         System.out.println();
+
         boolean flag = true;
         while (flag) {
             System.out.println("For help, enter a listed valid command or type \'cancel\' when finished. Type \'help\' to \nview list of valid commands again.");
-            //TODO: think about how inner helper functions can utilize multiple argument inputs, need to make helper function for this
-            String [] ins = trimSplitAndLower(in.nextLine());
-            String s = ins[0];
-            if(s.equals("cancel")){
+            System.out.println();
+            String arg;
+            if(comms.size() == 0){
+                String s = in.nextLine();
+                ArrayList<String> temp  = trimToArrList(s);
+                temp.addAll(comms);
+                comms = temp;
+                arg = comms.remove(0);
+            }
+            else {
+                arg = comms.remove(0);
+                System.out.println("* input * "+arg);
+            }
+
+            if(arg.equals("cancel")){
                 flag = false;
             }
             else {
                 System.out.println();
-                switch (s) {
+                switch (arg) {
                     case "quit":
                         System.out.println("*****\nThe \'quit\' command stops the overall program. Enter \'quit\' while the Assistant \nis in it's base state of \"Please enter a valid command:\" to quit the program.\n*****");
                         break;
@@ -49,37 +63,38 @@ public class Controller {
                         System.out.println(listComms);
                         break;
                     default:
-                        System.out.println("Invalid command \'" + s + "\'.");
+                        System.out.println("Invalid command \'" + arg + "\'.");
                 }
                 System.out.println();
             }
         }
     }
 
-    public static void addMessage(Scanner in, String [] comms){
-        int i = 1;
+/*
+    public static void addMessage(Scanner in, ArrayList<String> comms){
         System.out.println("Add Section or Table? (section/table)");
         boolean flag = true;
         while(flag){
-            if(i < comms.length) {
-                switch (comms[i]){
+            if(comms != null) {
+                //TODO change the helper functions from expecting an int and also add a String s for commands.remove(0);
+                switch (comms.remove(0)){
                     case "section":
                         flag = false;
                         System.out.println("\n* input: \'section\' *\n");
-                        addSectionMessage(in, comms, i);
+                        addSectionMessage(in, comms);
                         break;
                     case "table":
                         flag = false;
                         System.out.println("\n* input: \'table\' *\n");
-                        addTableMessage(in, comms, i);
+                        addTableMessage(in, comms);
                         break;
                     case "cancel":
                         flag = false;
                         System.out.println("Cancelling...");
                         break;
                     default:
-                        System.out.println("Invalid argument \'"+ comms[i] +"\'.");
-                        comms = new String[0];
+                        System.out.println("Invalid argument \'"+ comms +"\'.");
+                        comms = null;
                         i = -1;
                         break;
                 }
@@ -89,11 +104,11 @@ public class Controller {
                 switch (s){
                     case "section":
                         flag = false;
-                        addSectionMessage(in, comms, i);
+                        addSectionMessage(in, comms);
                         break;
                     case "table":
                         flag = false;
-                        addTableMessage(in, comms, i);
+                        addTableMessage(in, comms);
                         break;
                     case "cancel":
                         flag = false;
@@ -107,53 +122,66 @@ public class Controller {
         }
     }
 
-    public static void addSectionMessage(Scanner in, String [] comms, int i){
+    public static void addSectionMessage(Scanner in, ArrayList<String> comms){
         System.out.println("sect message");
     }
 
-    public static void addTableMessage(Scanner in, String [] comms, int i){
+    public static void addTableMessage(Scanner in, ArrayList<String> comms){
         System.out.println("tab message");
     }
-
+*/
     public static void main(String [] args){
         System.out.println("Seating Assistant initializing...");
         System.out.println();
         System.out.println(equalLine);
         Scanner in = new Scanner(System.in);
         boolean stop = true;
+
+        ArrayList<String> comms = new ArrayList<String>();
         while(stop){
             System.out.println("Enter a valid command (type 'help' to list):");
-            String s = in.nextLine();
-            System.out.println();
-            String [] commands = trimSplitAndLower(s);
 
-            //TODO need to implement how inputting multiple command arguments would work
-            //idea, iterate through the commands list, if new input after an invalid, then rest the commands list and index
-            //keep going through the commands list and if out of bounds, do scanner.in so don't have to change much code
-            //other than an if else statement for the s string for the switch case
+            System.out.println();
+            String arg;
+            if(comms.size() == 0){
+                String s = in.nextLine();
+                ArrayList<String> temp  = trimToArrList(s);
+                temp.addAll(comms);
+                comms = temp;
+                arg = comms.remove(0);
+            }
+            else {
+                arg = comms.remove(0);
+                System.out.println("* input * "+arg);
+            }
 
             //System.out.println(Arrays.toString(commands));
-            switch (commands[0]){
+            switch (arg){
                 case "quit":
                     System.out.println("Shutting Down...");
                     stop = false;
                     break;
                 case "help":
                     System.out.println(periodLine);
-                    helpMessage(in, commands);
+                    helpMessage(in, comms);
                     System.out.println(periodLine);
                     break;
                 case "add": {
                     System.out.println(periodLine);
-                    addMessage(in, commands);
+                    //addMessage(in, comms);
                     System.out.println(periodLine);
                     break;
                 }
+                case "test":
+                    break;
                 default:
-                    System.out.println("Invalid command: \'" + s + "\'");
+                    System.out.println("Invalid command: \'" + arg + "\'");
+                    //try the error argument helper?
+                    comms = new ArrayList<>();
             }
             System.out.println();
         }
         System.out.println(equalLine);
     }
+
 }
